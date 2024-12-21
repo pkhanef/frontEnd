@@ -15,6 +15,7 @@ export default function Header() {
     const { currentUser } = useSelector((state) => state.user)
     const { theme } = useSelector((state) => state.theme)
     const [searchTerm, setSearchTerm] = useState('')
+    const USER_SIGNOUT = import.meta.env.VITE_BE_API_URL;
 
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search)
@@ -25,7 +26,7 @@ export default function Header() {
     }, [location.search])
     const handleSignout = async () => {
         try {
-            const res = await fetch('/api/user/signout', {
+            const res = await fetch(`${USER_SIGNOUT}api/user/signout`, {
                 method: 'POST'
             })
             const data = await res.json()
@@ -49,8 +50,8 @@ export default function Header() {
   return (
     <Navbar className='border-b-2 fixed z-20 top-0 left-0 right-0'>
         <Link to="/" className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white'>
-            <span className='px-2 py-1 bg-gradient-to-r from-teal-300 via-green-200 to-lime-300 rounded-lg text-slate-950 mr-1'>Flowers's Soul</span>
-            Blog
+            <span className='px-2 py-1 bg-gradient-to-r from-teal-300 via-green-200 to-lime-300 rounded-lg text-slate-950 mr-1'>KaTo</span>
+            Flowers
         </Link>
         <form onSubmit={handleSubmit}>
             <TextInput 

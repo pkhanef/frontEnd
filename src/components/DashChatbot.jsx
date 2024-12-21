@@ -14,6 +14,7 @@ export default function FileUpload() {
   const [fileURL, setFileURL] = useState(null);
   const [formData, setFormData] = useState({ title: '', file: null });
   const API_IMPORT_URL = import.meta.env.VITE_API_IMPORT_URL;
+  const BE_API = import.meta.env.VITE_BE_API_URL;
 
   const handleUploadFile = async () => {
     try {
@@ -57,7 +58,7 @@ export default function FileUpload() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res1 = await fetch('/api/chatbot/import-data', {
+      const res1 = await fetch(`${BE_API}api/chatbot/import-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,15 +99,14 @@ export default function FileUpload() {
 
   useEffect(() => {
     const fetchChatbots = async () => {
-      if (!currentUser  || !currentUser .isAdmin) return; // Kiểm tra currentUser   
+      if (!currentUser  || !currentUser .isAdmin) return;
   
       try {
-        const res = await fetch(`/api/chatbot/data`);
+        const res = await fetch(`${BE_API}api/chatbot/data`);
         const data = await res.json();
-        if (res.ok && Array.isArray(data)) { // Kiểm tra data
-          setChatbots(data); // Giả sử API trả về mảng chatbots
-        } else {
-          console.error('Invalid data format:', data); // Ghi lại lỗi nếu định dạng không hợp lệ
+        if (res.ok && Array.isArray(data)) {
+          setChatbots(data); 
+          console.error('Invalid data format:', data); 
         }
       } catch (error) {
         console.log(error);
@@ -126,7 +126,7 @@ export default function FileUpload() {
             placeholder='Title'
             required
             id='title'
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })} // Cập nhật title vào formData
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
           />
           <div className="flex gap-4 items-center justify-between border-1 border-teal-500 border p-3">
             <FileInput
@@ -174,7 +174,6 @@ export default function FileUpload() {
                       </Table.Cell>
                       <Table.Cell>
                         {chatbot.file ? (
-                          // Cắt ngắn URL nếu nó dài hơn 30 ký tự
                           chatbot.file.length > 30 ? `${chatbot.file.substring(0, 30)}...` : chatbot.file
                         ) : (
                           'No file'

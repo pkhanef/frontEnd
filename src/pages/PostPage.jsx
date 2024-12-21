@@ -14,12 +14,13 @@ export default function PostPage() {
     const [showModal, setShowModal] = useState(false)
     const [summary, setSummary] = useState("");
     const API_SUMMARY_URL = import.meta.env.VITE_API_SUMMARY_URL;
+    const BE_API = import.meta.env.VITE_BE_API_URL;
 
     useEffect(() => {
         const fetchPost = async () => {
             try {
                 setLoading(true)
-                const res = await fetch(`/api/post/getpost?slug=${postSlug}`)
+                const res = await fetch(`${BE_API}api/post/getpost?slug=${postSlug}`)
                 const data = await res.json()
                 if(!res.ok){
                     setError(true)
@@ -42,7 +43,7 @@ export default function PostPage() {
     useEffect(() => {
         try {
             const fetchRecentPosts = async () => {
-                const res = await fetch(`/api/post/getpost?limit=3`)
+                const res = await fetch(`${BE_API}api/post/getpost?limit=3`)
                 const data = await res.json()
                 if(res.ok){
                     setRecentPosts(data.posts)
@@ -90,15 +91,19 @@ export default function PostPage() {
         <div className='flex flex-row relative'>
             <div className='w-2/3 min-h-screen '>  
                 <img src={post && post.image} alt={post && post.title} className='p-5 max-h-[600px] w-full object-cover'/>
-                <Button color='gray' pill size='xs' className='self-center mt-5'>
-                    <span 
-                        onClick={() => {
-                            setShowModal(true)
-                        }}>
-                        Summory now
-                    </span>
-                </Button> 
                 <h1 className='text-3xl mt-5 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl'>{post && post.title}</h1>
+                <div className="flex justify-center w-full">
+                    <Button
+                        color="gray"
+                        pill
+                        size="xs"
+                        className="text-center"
+                    >
+                        <span onClick={() => setShowModal(true)}>
+                            Summary now
+                        </span>
+                    </Button>
+                </div>
                 <div className='flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs '>
                     <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
                     <span className='italic'>{post && (post.content.length / 1000).toFixed(0)} mins read</span>

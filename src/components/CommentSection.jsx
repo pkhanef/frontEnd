@@ -12,6 +12,7 @@ export default function CommentSection({postId}) {
     const [commentError, setCommentError] = useState(null)
     const [showModal, setShowModal] = useState(false)
     const [commentToDelete, setCommentToDelete] = useState(null)
+    const BE_API = import.meta.env.VITE_BE_API_URL;
     const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -20,7 +21,7 @@ export default function CommentSection({postId}) {
                 return
             }
     
-            const res = await fetch('/api/comment/create', {
+            const res = await fetch(`${BE_API}api/comment/create`, {
                 method: 'POST',
                 headers:{
                     'Content-Type': 'application/json',
@@ -41,7 +42,7 @@ export default function CommentSection({postId}) {
     useEffect(() => {
         const getComments = async () => {
             try {
-                const res = await fetch(`/api/comment/getpostcomment/${postId}`)
+                const res = await fetch(`${BE_API}api/comment/getpostcomment/${postId}`)
                 if(res.ok){
                     const data = await res.json()
                     setComments(data)
@@ -60,7 +61,7 @@ export default function CommentSection({postId}) {
             navigate('/sign-in');
             return;
           }
-          const res = await fetch(`/api/comment/likecomment/${commentId}`, {
+          const res = await fetch(`${BE_API}api/comment/likecomment/${commentId}`, {
             method: 'PUT',
           });
           if (res.ok) {
@@ -97,7 +98,7 @@ export default function CommentSection({postId}) {
                 navigate('/sign-in')
                 return
             }
-            const res = await fetch(`/api/comment/deletecomment/${commentId}`, {
+            const res = await fetch(`${BE_API}api/comment/deletecomment/${commentId}`, {
                 method: 'DELETE'
             })
             if(res.ok){

@@ -9,10 +9,11 @@ import { Button } from 'flowbite-react'
 
 export default function Home() {
   const [posts, setPosts] = useState([])
+  const BE_API = import.meta.env.VITE_BE_API_URL;
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await fetch('/api/post/getpost')
+      const res = await fetch(`${BE_API}api/post/getpost`)
       const data = await res.json()
       setPosts(data.posts)
     }

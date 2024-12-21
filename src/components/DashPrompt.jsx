@@ -8,11 +8,12 @@ export default function DashPrompt() {
   const [publishError, setPublishError] = useState(null);
   const [prompts, setPrompts] = useState([])
   const API_CUSTOM_URL = import.meta.env.VITE_API_CUSTOM_URL;
+  const BE_API = import.meta.env.VITE_BE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/chatbot/custom-prompt', {
+      const res = await fetch(`${BE_API}api/chatbot/custom-prompt`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +54,7 @@ export default function DashPrompt() {
       if (!currentUser || !currentUser.isAdmin) return; 
   
       try {
-        const res = await fetch(`/api/chatbot/prompt`);
+        const res = await fetch(`${BE_API}api/chatbot/prompt`);
         const data = await res.json();
         if (res.ok && Array.isArray(data)) { 
           setPrompts(data); 

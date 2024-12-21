@@ -10,6 +10,7 @@ export default function SignIn() {
   const {loading, error: errorMessage} = useSelector(state => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const BE_API = import.meta.env.VITE_BE_API_URL;
   const handleChange = (e) => {
     setFormData({...formData, [e.target.id]: e.target.value.trim()})
   }
@@ -20,7 +21,8 @@ export default function SignIn() {
     }
     try {
       dispatch(SignInStart())
-      const res = await fetch('/api/auth/signin', {
+      console.log(BE_API);
+      const res = await fetch(`${BE_API}api/auth/signin`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(formData)

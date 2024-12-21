@@ -18,11 +18,12 @@ export default function UpdatePost() {
   const navigate = useNavigate()
   const {currentUser} = useSelector((state) => state.user)
   const {postId} = useParams()
+  const BE_API = import.meta.env.VITE_BE_API_URL;
 
   useEffect(() => {
     try {
       const fetchPost = async () => {
-        const res = await fetch(`/api/post/getpost?postId=${postId}`);
+        const res = await fetch(`${BE_API}api/post/getpost?postId=${postId}`);
         const data = await res.json();
         if (!res.ok) {
           console.log(data.message);
@@ -81,7 +82,7 @@ export default function UpdatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
+      const res = await fetch(`${BE_API}api/post/updatepost/${formData._id}/${currentUser._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

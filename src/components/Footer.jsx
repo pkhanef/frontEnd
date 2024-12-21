@@ -9,8 +9,8 @@ export default function FooterCom() {
         <div className='w-full max-w-7xl mx-auto'>
             <div className='w-full sm:flex sm:items-center sm:justify-between'>
                     <Link to="/" className='self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white'>
-                        <span className='px-2 py-1 bg-gradient-to-r from-teal-300 via-green-200 to-lime-300 rounded-lg text-slate-950 mr-1'>Flowers's Soul</span>
-                        Blog
+                        <span className='px-2 py-1 bg-gradient-to-r from-teal-300 via-green-200 to-lime-300 rounded-lg text-slate-950 mr-1'>KaTo</span>
+                        Flowers
                     </Link>
                 <div className='flex gap-6 sm:mt-0 mt-4 sm:justify-center'>
                     <Footer.Icon href='https://www.facebook.com/vlp.khan19' icon={BsFacebook}/>

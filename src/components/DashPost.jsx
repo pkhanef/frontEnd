@@ -10,10 +10,12 @@ export default function DashPost() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false)
   const [postIdToDelete, setPostIdToDelete] = useState('')
+  const BE_API = import.meta.env.VITE_BE_API_URL;
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`/api/post/getpost?userId=${currentUser._id}`)
+        const res = await fetch(`${BE_API}api/post/getpost?userId=${currentUser._id}`)
         const data = await res.json()
         if(res.ok){
           setUserPosts(data.posts)
@@ -33,7 +35,7 @@ export default function DashPost() {
   const handleShowMore = async () => {
     const startIndex = userPosts.length
     try {
-      const res = await fetch(`/api/post/getpost?userId=${currentUser._id}&startIndex=${startIndex}`)
+      const res = await fetch(`${BE_API}api/post/getpost?userId=${currentUser._id}&startIndex=${startIndex}`)
       const data = await res.json()
       if(res.ok){
         setUserPosts((prev) => [...prev, ...data.posts]);
@@ -48,7 +50,7 @@ export default function DashPost() {
   const handleDeletePost = async () => {
     setShowModal(false)
     try {
-      const res = await fetch(`/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,{
+      const res = await fetch(`${BE_API}api/post/deletepost/${postIdToDelete}/${currentUser._id}`,{
         method: 'DELETE'
       })
       const data = await res.json()

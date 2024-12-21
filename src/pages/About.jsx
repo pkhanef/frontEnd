@@ -4,7 +4,7 @@ import { HiCheck } from "react-icons/hi";
 
 export default function About() {
   return (
-    <div className='min-h-screen flex items-center justify-center flex flex-col gap-4 py-10 pt-20'>
+    <div className='min-h-screen flex items-center justify-center flex-col gap-4 py-10 pt-20'>
       <div className='max-w-4xl mx-auto text-center '>
         <h1 className='text-5xl font-semibold text-center my-7'>Who are we</h1>
         <p className='text-md text-gray-500 flex flex-col gap-6 pb-4'>
