@@ -3,6 +3,7 @@ import moment from 'moment'
 import {FaThumbsUp} from 'react-icons/fa'
 import { useSelector } from "react-redux"
 import {Button, Textarea} from 'flowbite-react'
+import {getAccessTokenFromCookie} from "../authUtils"
 
 export default function Comment({comment, onLike, onEdit, onDelete}) {
     const [user, setUser] = useState({})
@@ -10,6 +11,7 @@ export default function Comment({comment, onLike, onEdit, onDelete}) {
     const [editedContent, setEditedContent] = useState(comment.content)
     const {currentUser} = useSelector((state) => state.user)
     const BE_API = import.meta.env.VITE_BE_API_URL;
+    const token = getAccessTokenFromCookie();
     
     useEffect(() => {
         const getUser = async () => {
@@ -35,8 +37,9 @@ export default function Comment({comment, onLike, onEdit, onDelete}) {
         try {
             const res = await fetch(`${BE_API}api/comment/editcomment/${comment._id}`, {
                 method: "PUT",
-                headers:{
-                    'Content-Type': 'application/json'
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     content: editedContent

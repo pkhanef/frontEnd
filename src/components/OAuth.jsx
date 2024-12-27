@@ -5,11 +5,13 @@ import { app } from "../firebase";
 import { useDispatch } from "react-redux";
 import { SignInSuccess } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { getAccessTokenFromCookie } from '../authUtils'
 
 export default function OAuth() {
     const auth = getAuth(app)
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const token = getAccessTokenFromCookie()
     const BE_API = import.meta.env.VITE_BE_API_URL;
 
     const handleGoogleClick = async () =>{
@@ -19,7 +21,10 @@ export default function OAuth() {
             const resultsFromGoogle = await signInWithPopup(auth, provider)
             const res = await fetch(`${BE_API}api/auth/google`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, 
+                },
                 body: JSON.stringify({
                     name: resultsFromGoogle.user.displayName,
                     email: resultsFromGoogle.user.email,

@@ -4,9 +4,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import Comment from './Comment'
 import {HiOutlineExclamationCircle} from 'react-icons/hi'
+import {getAccessTokenFromCookie} from "../authUtils"
 
 export default function CommentSection({postId}) {
     const {currentUser} = useSelector(state => state.user)
+    console.log({currentUser})
     const [comment, setComment] = useState('')
     const [comments, setComments] = useState([])
     const [commentError, setCommentError] = useState(null)
@@ -14,30 +16,45 @@ export default function CommentSection({postId}) {
     const [commentToDelete, setCommentToDelete] = useState(null)
     const BE_API = import.meta.env.VITE_BE_API_URL;
     const navigate = useNavigate()
+    const token = getAccessTokenFromCookie();
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         try {
-            if(comment.length > 200){
-                return
+            if (comment.length > 200) {
+                return;
+            }
+    
+            if (!token) {
+                console.error("No access token found");
+                return;
             }
     
             const res = await fetch(`${BE_API}api/comment/create`, {
                 method: 'POST',
-                headers:{
+                credentials: 'include',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body:JSON.stringify({ content: comment, postId, userId: currentUser._id})
-            })
-            const data = await res.json()
-            if(res.ok){
-                setComment('')
-                setCommentError(null)
-                setComments([data, ...comments])
+                body: JSON.stringify({ content: comment, postId, userId: currentUser._id }),
+            });
+    
+            const data = await res.json();
+    
+            if (res.ok) {
+                setComment('');
+                setCommentError(null);
+                setComments([data, ...comments]);
+            } else {
+                // Xử lý lỗi từ backend
+                setCommentError(data.message || "Something went wrong");
             }
         } catch (error) {
-            setCommentError(error.message)
+            console.error("Error response from backend:", error);
+            setCommentError(error.message);
         }
-    }
+    };
+    
 
     useEffect(() => {
         const getComments = async () => {
@@ -63,6 +80,9 @@ export default function CommentSection({postId}) {
           }
           const res = await fetch(`${BE_API}api/comment/likecomment/${commentId}`, {
             method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
           });
           if (res.ok) {
             const data = await res.json();
@@ -99,7 +119,10 @@ export default function CommentSection({postId}) {
                 return
             }
             const res = await fetch(`${BE_API}api/comment/deletecomment/${commentId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             })
             if(res.ok){
                 const data = await res.json()

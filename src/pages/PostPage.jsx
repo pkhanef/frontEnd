@@ -3,6 +3,7 @@ import {Link, useParams} from 'react-router-dom'
 import {Button,Modal, Spinner, Textarea} from 'flowbite-react'
 import CallToAction from '../components/CallToAction'
 import CommentSection from '../components/CommentSection'
+import {useSelector} from 'react-redux'
 import PostCard from '../components/PostCard'
 
 export default function PostPage() {
@@ -15,6 +16,7 @@ export default function PostPage() {
     const [summary, setSummary] = useState("");
     const API_SUMMARY_URL = import.meta.env.VITE_API_SUMMARY_URL;
     const BE_API = import.meta.env.VITE_BE_API_URL;
+    const { currentUser } = useSelector(state => state.user);
 
     useEffect(() => {
         const fetchPost = async () => {

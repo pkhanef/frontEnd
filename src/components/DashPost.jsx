@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux'
 import {Button, Modal, Table} from 'flowbite-react'
 import {Link} from 'react-router-dom'
 import { HiOutlineExclamationCircle } from 'react-icons/hi'
+import { getAccessTokenFromCookie } from '../authUtils'
 
 export default function DashPost() {
   const {currentUser} = useSelector((state) => state.user)
@@ -10,6 +11,7 @@ export default function DashPost() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false)
   const [postIdToDelete, setPostIdToDelete] = useState('')
+  const token = getAccessTokenFromCookie()
   const BE_API = import.meta.env.VITE_BE_API_URL;
 
   useEffect(() => {
@@ -51,7 +53,10 @@ export default function DashPost() {
     setShowModal(false)
     try {
       const res = await fetch(`${BE_API}api/post/deletepost/${postIdToDelete}/${currentUser._id}`,{
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
       })
       const data = await res.json()
       if(!res.ok){

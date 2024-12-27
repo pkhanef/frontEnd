@@ -8,6 +8,7 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import {useNavigate, useParams} from 'react-router-dom'
 import {useSelector} from 'react-redux'
+import { getAccessTokenFromCookie } from '../authUtils';
 
 export default function UpdatePost() {
   const [file, setFile] = useState(null)
@@ -18,6 +19,7 @@ export default function UpdatePost() {
   const navigate = useNavigate()
   const {currentUser} = useSelector((state) => state.user)
   const {postId} = useParams()
+  const token = getAccessTokenFromCookie()
   const BE_API = import.meta.env.VITE_BE_API_URL;
 
   useEffect(() => {
@@ -86,6 +88,7 @@ export default function UpdatePost() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData)
       })

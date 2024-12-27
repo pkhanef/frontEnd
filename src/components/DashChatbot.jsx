@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux'
 import { Button, FileInput, Alert, TextInput, Table } from 'flowbite-react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
+import {getAccessTokenFromCookie} from "../authUtils"
 
 export default function FileUpload() {
   const {currentUser} = useSelector((state) => state.user)
@@ -13,6 +14,7 @@ export default function FileUpload() {
   const [fileUploadError, setFileUploadError] = useState(null);
   const [fileURL, setFileURL] = useState(null);
   const [formData, setFormData] = useState({ title: '', file: null });
+  const token = getAccessTokenFromCookie()
   const API_IMPORT_URL = import.meta.env.VITE_API_IMPORT_URL;
   const BE_API = import.meta.env.VITE_BE_API_URL;
 
@@ -62,6 +64,7 @@ export default function FileUpload() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData)
       });
@@ -102,7 +105,11 @@ export default function FileUpload() {
       if (!currentUser  || !currentUser .isAdmin) return;
   
       try {
-        const res = await fetch(`${BE_API}api/chatbot/data`);
+        const res = await fetch(`${BE_API}api/chatbot/data`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         const data = await res.json();
         if (res.ok && Array.isArray(data)) {
           setChatbots(data); 

@@ -17,7 +17,7 @@ export default function CallToAction({ post }) {
   };
 
   const generateRandomId = () => {
-    return Math.floor(Math.random() * 10000000); // Generate a random number from 0 to 9999999
+    return Math.floor(Math.random() * 10000000); 
   };
 
   const handleKeyDown = async (e) => {

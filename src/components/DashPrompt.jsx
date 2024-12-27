@@ -1,6 +1,7 @@
 import { Alert, Button, Textarea, TextInput, Table } from 'flowbite-react';
 import { useState, useEffect } from 'react';
 import {useSelector} from 'react-redux'
+import { getAccessTokenFromCookie } from '../authUtils';
 
 export default function DashPrompt() {
   const {currentUser} = useSelector((state) => state.user)
@@ -9,6 +10,7 @@ export default function DashPrompt() {
   const [prompts, setPrompts] = useState([])
   const API_CUSTOM_URL = import.meta.env.VITE_API_CUSTOM_URL;
   const BE_API = import.meta.env.VITE_BE_API_URL;
+  const token = getAccessTokenFromCookie();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,6 +19,7 @@ export default function DashPrompt() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -54,7 +57,11 @@ export default function DashPrompt() {
       if (!currentUser || !currentUser.isAdmin) return; 
   
       try {
-        const res = await fetch(`${BE_API}api/chatbot/prompt`);
+        const res = await fetch(`${BE_API}api/chatbot/prompt`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         const data = await res.json();
         if (res.ok && Array.isArray(data)) { 
           setPrompts(data); 

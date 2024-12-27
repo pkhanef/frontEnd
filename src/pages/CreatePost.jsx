@@ -7,6 +7,7 @@ import {app} from '../firebase'
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import {useNavigate} from 'react-router-dom'
+import { getAccessTokenFromCookie } from '../authUtils';
 
 export default function CreatePost() {
   const [file, setFile] = useState(null)
@@ -15,6 +16,7 @@ export default function CreatePost() {
   const [formData, setFormData] = useState({})
   const [publishError, setPublishError] = useState(null)
   const navigate = useNavigate()
+  const token = getAccessTokenFromCookie()
   const BE_API = import.meta.env.VITE_BE_API_URL;
 
   const handleUploadImage = async () => {
@@ -61,6 +63,7 @@ export default function CreatePost() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData)
       })

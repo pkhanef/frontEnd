@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector} from 'react-redux'
 import { SignInStart, SignInSuccess, SignInFailure } from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
+import Cookies from 'js-cookie';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({})
@@ -21,17 +22,17 @@ export default function SignIn() {
     }
     try {
       dispatch(SignInStart())
-      console.log(BE_API);
       const res = await fetch(`${BE_API}api/auth/signin`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       })
       const data = await res.json()
       if(data.success === false){
         dispatch(SignInFailure(data.message))
       }
       if(res.ok){
+        document.cookie = `access_token=${data.access_token}; path=/; max-age=86400; SameSite=Lax`;
         dispatch(SignInSuccess(data))
         navigate('/')
       }

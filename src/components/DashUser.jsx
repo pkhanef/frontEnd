@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux'
 import {Button, Modal, Table} from 'flowbite-react'
 import { HiOutlineExclamationCircle } from 'react-icons/hi'
 import {FaCheck, FaTimes} from 'react-icons/fa'
+import { getAccessTokenFromCookie } from '../authUtils'
 
 export default function DashUsers() {
   const {currentUser} = useSelector((state) => state.user)
@@ -10,12 +11,17 @@ export default function DashUsers() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false)
   const [userIdToDelete, setUserIdToDelete] = useState('')
+  const token = getAccessTokenFromCookie()
   const BE_API = import.meta.env.VITE_BE_API_URL;
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`${BE_API}api/user/getusers`)
+        const res = await fetch(`${BE_API}api/user/getusers`, {
+          headers:{
+            'Authorization': `Bearer ${token}`,
+          }
+        })
         const data = await res.json()
         if(res.ok){
           setUsers(data.users)
@@ -36,7 +42,11 @@ export default function DashUsers() {
     const startIndex = users.length
     console.log(startIndex)
     try {
-      const res = await fetch(`${BE_API}api/user/getusers?startIndex=${startIndex}`)
+      const res = await fetch(`${BE_API}api/user/getusers?startIndex=${startIndex}`,{
+        headers:{
+          'Authorization': `Bearer ${token}`,
+        }
+      })
       const data = await res.json()
       if(res.ok){
         setUsers((prev) => [...prev, ...data.users]);
@@ -52,7 +62,10 @@ export default function DashUsers() {
     setShowModal(false)
     try {
       const res = await fetch(`${BE_API}api/user/delete/${userIdToDelete}`,{
-        method: 'DELETE'
+        method: 'DELETE',
+        headers:{
+          'Authorization': `Bearer ${token}`,
+        }
       })
       const data = await res.json()
       if(!res.ok){

@@ -9,6 +9,7 @@ import { UpdateStart, UpdateSuccess, UpdateFailure, DeleteUserStart, DeleteUserS
 import { useDispatch } from 'react-redux'
 import {HiOutlineExclamationCircle} from 'react-icons/hi'
 import {Link} from 'react-router-dom'
+import {getAccessTokenFromCookie} from "../authUtils"
 
 export default function DashProfile() {
     const {currentUser, error, loading} = useSelector((state) => state.user)
@@ -23,6 +24,7 @@ export default function DashProfile() {
     const [formData, setFormData] = useState({})
     const filePickerRef = useRef()
     const dispatch = useDispatch()
+    const token = getAccessTokenFromCookie()
     const BE_API = import.meta.env.VITE_BE_API_URL;
 
     const handleImageChange = (e) => {
@@ -55,7 +57,7 @@ export default function DashProfile() {
         setImageFileUploadError(null)
         const storage = getStorage(app)
         const fileName = new Date().getTime() + imageFile.name
-        const storageRef = ref(storage, fileName)
+        const storageRef = ref(storage, `Images/${fileName}`);
         const uploadTask = uploadBytesResumable(storageRef, imageFile)
         uploadTask.on(
             "state_changed",
@@ -101,7 +103,8 @@ export default function DashProfile() {
             const res = await fetch(`${BE_API}api/user/update/${currentUser._id}`,{
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData)
             })
@@ -124,7 +127,10 @@ export default function DashProfile() {
         try {
             dispatch(DeleteUserStart())
             const res = await fetch(`${BE_API}api/user/delete/${currentUser._id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             })
             const data = await res.json()
             if(!res.ok){
@@ -140,7 +146,10 @@ export default function DashProfile() {
     const handleSignout = async () => {
         try {
             const res = await fetch(`${BE_API}api/user/signout`, {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             })
             const data = await res.json()
             if(!res.ok){

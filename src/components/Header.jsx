@@ -6,6 +6,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import { toggleTheme} from '../redux/theme/themeSlice'
 import { SignoutSuccess } from '../redux/user/userSlice'
 import { useEffect, useState } from 'react'
+import { getAccessTokenFromCookie } from '../authUtils'
 
 export default function Header() {
     const path = useLocation().pathname;
@@ -15,7 +16,8 @@ export default function Header() {
     const { currentUser } = useSelector((state) => state.user)
     const { theme } = useSelector((state) => state.theme)
     const [searchTerm, setSearchTerm] = useState('')
-    const USER_SIGNOUT = import.meta.env.VITE_BE_API_URL;
+    const token = getAccessTokenFromCookie()
+    const BE_API = import.meta.env.VITE_BE_API_URL;
 
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search)
@@ -26,8 +28,11 @@ export default function Header() {
     }, [location.search])
     const handleSignout = async () => {
         try {
-            const res = await fetch(`${USER_SIGNOUT}api/user/signout`, {
-                method: 'POST'
+            const res = await fetch(`${BE_API}api/user/signout`, {
+                method: 'POST',
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                }
             })
             const data = await res.json()
             if(!res.ok){

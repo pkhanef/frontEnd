@@ -5,12 +5,14 @@ import {Link, useLocation} from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { SignoutSuccess } from '../redux/user/userSlice'
+import { getAccessTokenFromCookie } from '../authUtils'
 
 export default function DashSidebar() {
     const location = useLocation()
     const dispatch = useDispatch()
     const [tab, setTab] = useState('')
     const { currentUser } = useSelector((state) => state.user)
+    const token = getAccessTokenFromCookie();
     const BE_API = import.meta.env.VITE_BE_API_URL;
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search)
@@ -23,7 +25,10 @@ export default function DashSidebar() {
     const handleSignout = async () => {
         try {
             const res = await fetch(`${BE_API}api/user/signout`, {
-                method: 'POST'
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                }
             })
             const data = await res.json()
             if(!res.ok){

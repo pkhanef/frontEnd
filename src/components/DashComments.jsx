@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {useSelector} from 'react-redux'
 import {Button, Modal, Table} from 'flowbite-react'
 import { HiOutlineExclamationCircle } from 'react-icons/hi'
+import { getAccessTokenFromCookie } from '../authUtils'
 
 export default function DashComments() {
   const {currentUser} = useSelector((state) => state.user)
@@ -9,12 +10,17 @@ export default function DashComments() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false)
   const [commentIdToDelete, setCommentIdToDelete] = useState('')
+  const token = getAccessTokenFromCookie()
   const BE_API = import.meta.env.VITE_BE_API_URL;
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await fetch(`${BE_API}api/comment/getcomments`)
+        const res = await fetch(`${BE_API}api/comment/getcomments`,{
+          headers:{
+            'Authorization': `Bearer ${token}`,
+          }
+        })
         const data = await res.json()
         if(res.ok){
           setComments(data.comments)
@@ -34,7 +40,11 @@ export default function DashComments() {
   const handleShowMore = async () => {
     const startIndex = comments.length
     try {
-      const res = await fetch(`${BE_API}api/comment/getcomments?startIndex=${startIndex}`)
+      const res = await fetch(`${BE_API}api/comment/getcomments?startIndex=${startIndex}`,{
+        headers:{
+          'Authorization': `Bearer ${token}`,
+        }
+      })
       const data = await res.json()
       if(res.ok){
         setComments((prev) => [...prev, ...data.comments]);
@@ -50,7 +60,10 @@ export default function DashComments() {
     setShowModal(false)
     try {
       const res = await fetch(`${BE_API}api/comment/deletecomment/${commentIdToDelete}`,{
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       })
       const data = await res.json()
       if(!res.ok){

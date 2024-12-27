@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux'
 import {HiArrowNarrowUp, HiOutlineUserGroup, HiAnnotation, HiDocumentText} from 'react-icons/hi'
 import { Button, Table } from 'flowbite-react'
 import { Link } from 'react-router-dom'
+import { getAccessTokenFromCookie } from '../authUtils'
 
 export default function DashboardComp() {
     const [users, setUsers] = useState([])
@@ -15,14 +16,18 @@ export default function DashboardComp() {
     const [lastMonthPosts, setLastMonthPosts] = useState(0)
     const [lastMonthComments, setLastMonthComments] = useState(0)
     const {currentUser} = useSelector((state) => state.user )
-    const USER_GETUSE = import.meta.env.VITE_BE_API_URL;
-    const POST_GETPOST = import.meta.env.VITE_BE_API_URL;
-    const CMT_GETCMT = import.meta.env.VITE_BE_API_URL;
+    const token = getAccessTokenFromCookie()
+    const BE_API = import.meta.env.VITE_BE_API_URL;
+    
 
     useEffect(() => {
         const fetchUsers = async() => {
             try {
-                const res = await fetch(`${USER_GETUSE}api/user/getusers?limit=5`)
+                const res = await fetch(`${BE_API}api/user/getusers?limit=5`, {
+                    headers:{
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
                 const data = await res.json()
                 if(res.ok){
                     setUsers(data.users)
@@ -35,7 +40,11 @@ export default function DashboardComp() {
         }
         const fetchPosts = async() => {
             try {
-                const res = await fetch(`${POST_GETPOST}api/post/getpost?limit=5`)
+                const res = await fetch(`${BE_API}api/post/getpost?limit=5`, {
+                    headers:{
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
                 const data = await res.json()
                 if(res.ok){
                     setPosts(data.posts)
@@ -48,7 +57,11 @@ export default function DashboardComp() {
         }
         const fetchComments = async() => {
             try {
-                const res = await fetch(`${CMT_GETCMT}api/comment/getcomments?limit=5`)
+                const res = await fetch(`${BE_API}api/comment/getcomments?limit=5`, {
+                    headers:{
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
                 const data = await res.json()
                 if(res.ok){
                     setComments(data.comments)
